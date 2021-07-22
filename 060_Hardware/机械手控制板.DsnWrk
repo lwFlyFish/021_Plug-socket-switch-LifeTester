@@ -1,0 +1,8 @@
+[ProjectGroup]
+Version=1.0
+[Project1]
+ProjectPath=000_电源板\PowerBoard.PrjPcb
+[Project2]
+ProjectPath=001_主板\DGCtrl.PrjPcb
+[Project3]
+ProjectPath=002_显示板\LedDispBoard.PrjPcb

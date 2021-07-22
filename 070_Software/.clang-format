@@ -1,0 +1,363 @@
+# http://clang.llvm.org/docs/ClangFormatStyleOptions.html
+# Disabling Formatting on a Piece of Code
+# The code between a comment // clang-format off or /* clang-format off */ up to a comment // clang-format on or /* clang-format on */ will not be formatted
+
+Language: Cpp
+
+# 没有配置的参数默认使用的样式
+BasedOnStyle: LLVM
+
+# 访问修饰符的额外缩进或缩进，例如 public
+AccessModifierOffset: -4
+
+# 左括号上参数对齐方式
+AlignAfterOpenBracket: Align
+
+# 连续行的赋值运算符对齐
+AlignConsecutiveAssignments: true
+
+# 连续行的位域分隔符对齐
+#AlignConsecutiveBitFields : true
+
+# 连续行的声明对齐
+AlignConsecutiveDeclarations: true
+
+# 连续行的预处理宏对齐
+AlignConsecutiveMacros: true
+
+# 在转义的换行符中用于反斜杠对齐的选项。
+AlignEscapedNewlines: Right
+
+# 将二元和三元表达式的操作数水平对齐。
+AlignOperands: true
+
+# 尾部注释对齐
+AlignTrailingComments: true
+
+# 函数调用或初始初始化列表不适合一行，所有参数放在下一行
+AllowAllArgumentsOnNextLine: false
+
+# 带有成员初始值设定项列表的构造函数定义不适合一行，并且`ConstructorInitializerAllOnOneLineOrOnePerLine`为true，所有成员初始值设定项放在下一行
+AllowAllConstructorInitializersOnNextLine: false
+
+# 函数声明不适合一行，所有参数放到下一行
+AllowAllParametersOfDeclarationOnNextLine: false
+
+# 代码短块放在同一行
+#AllowShortBlocksOnASingleLine: true
+AllowShortBlocksOnASingleLine: Always
+
+# 短case代码放在同一行
+AllowShortCaseLabelsOnASingleLine: true
+
+# 短Enum代码放在同一行
+#AllowShortEnumsOnASingleLine: false
+
+# 短函数放在同一行
+#AllowShortFunctionsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+
+# 短if放在同一行
+AllowShortIfStatementsOnASingleLine: true
+
+# 短Lambdas放在同一行
+AllowShortLambdasOnASingleLine: All
+
+# 短循环放在同一行
+AllowShortLoopsOnASingleLine: true
+
+#函数定义返回类型使用的换行样式。 不建议使用此选项，保留此选项是为了向后兼容
+#AlwaysBreakAfterDefinitionReturnType: None
+
+# 函数声明返回类型的换行样式
+AlwaysBreakAfterReturnType: None
+
+# 多行字符串文字前换行
+AlwaysBreakBeforeMultilineStrings: false
+
+# template声明换行样式
+AlwaysBreakTemplateDeclarations: MultiLine
+
+# 参数为false，函数调用的参数要么全部位于同一行，要么每个仅占一行。
+BinPackArguments: false
+
+# 参数为false，函数声明的参数要么全部位于同一行，要么每个仅占一行。
+BinPackParameters: false
+
+# 位域冒号间距样式
+#BitFieldColonSpacing: Both
+
+# 大括号换行的单个控制。如果BreakBeforeBraces设置为BS_Custom，则使用此参数指定应如何处理每个单独的花括号。 否则，这将被忽略。
+BraceWrapping:
+
+  # case关键字后的括号换行
+  AfterCaseLabel:  true
+  
+  # class定义时的括号换行
+  AfterClass:      true
+  
+  # if/for/while/switch后的换行
+  #AfterControlStatement: true
+  AfterControlStatement: Always
+  
+  # enum定义时的换行
+  AfterEnum:       true
+  
+  # 函数定义时的换行
+  AfterFunction:   true
+  
+  # namespace定义时的换行
+  AfterNamespace:  true
+  
+  # ObjC定义时的换行
+  AfterObjCDeclaration: true
+  
+  # 结构体定义时的换行
+  AfterStruct:     true
+  
+  # 联合体定义时的换行
+  AfterUnion:      true
+  
+  # extern 模块时的换行
+  AfterExternBlock: false
+  
+  # catch 关键字前的换行
+  BeforeCatch: true
+  
+  #else前的换行
+  BeforeElse: true
+  
+  # lambda模块前的换行
+  IndentBraces: true
+  
+  # while前的换行
+  #BeforeWhile: false
+  
+  # 括号缩进
+  IndentBraces: false
+  
+  # false,空内容的括号放在同一行
+  SplitEmptyFunction: false
+  
+  # false,空内容的class/结构体/联合体放在同一行
+  SplitEmptyRecord: false
+  
+  # false,空内容的namespace放在同一行
+  SplitEmptyNamespace: false
+  
+# 在Java文件中的字段上的每个注释之后换行
+BreakAfterJavaFieldAnnotations: true
+
+# 二元运算符之前换行
+BreakBeforeBinaryOperators: None
+
+# 大括号换行样式，根据BraceWrapping来确定
+BreakBeforeBraces: Custom
+
+# 三元运算符之前换行
+BreakBeforeTernaryOperators: false
+
+# Constructor初始化的样式
+BreakConstructorInitializers:  AfterColon
+
+# 继承列表的样式
+BreakInheritanceList: AfterColon
+
+# 长字符串自动换行
+BreakStringLiterals: false
+
+# 超过指定数据长度就换行
+ColumnLimit:     200
+
+# 描述具有特殊含义的注释的正则表达式，不应将其拆分为行或进行其他更改。
+CommentPragmas:  '^ IWYU pragma:'
+
+# 连续的namespace定义时换行
+CompactNamespaces: false
+
+# 构造函数初始化不适合同一行时，所有参数放到下一行
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+
+# 用于缩进构造函数初始值设定项列表和继承列表的字符数
+ConstructorInitializerIndentWidth: 4
+
+# 缩进线的宽度。
+ContinuationIndentWidth: 4
+
+# 如果为true，则将括号列表的格式设置为最适合C ++ 11括号列表的格式。重要区别：-括号列表内没有空格。 -右括号前没有换行符。-缩进使用连续缩进，而不是块缩进。从根本上讲，C ++ 11括号列表的格式与函数调用的格式完全相同。 如果括号列表后面跟随一个名称（例如类型或变量名称），则clang格式的格式就好像{}是使用该名称的函数调用的括号一样。 如果没有名称，则假定为零长度名称。
+Cpp11BracedListStyle: true
+
+# 分析最常用的行尾（\ r \ n或\ n）的格式化文件。 如果无法导出UseCRLF，则仅将其用作备用。
+DeriveLineEnding: true
+
+# 如果为true，则分析格式化的文件以查找＆和*的最常见对齐方式。 指针和参考对齐方式将根据文件中的首选项进行更新。 然后，将PointerAlignment仅用作后备。
+DerivePointerAlignment: true
+
+# 完全失能格式化
+DisableFormat:   false
+
+# 如果为true，则clang-format检测是否以每行一个参数格式化函数调用和定义。每个呼叫都可以装箱装，每行一个或不确定。 如果没有定论，例如 完全格式化为一行，但是需要做出决定，clang格式分析输入文件中是否还有其他bin打包的情况并采取相应的措施。注意：这是一个实验性标志，可能会消失或重命名。 不要在配置文件等中使用它。使用后果自负。
+#ExperimentalAutoDetectBinPacking: false
+
+# 如果为true，则clang格式将添加缺少的名称空间结尾注释，并修复无效的现有注释。
+FixNamespaceComments: true
+
+# 宏向量，应该解释为foreach循环，而不是函数调用。
+ForEachMacros:
+  - foreach
+  - forr
+  - Q_FOREACH
+  - BOOST_FOREACH
+  
+# 根据该值，可以将多个#include块分类为一个并根据类别进行划分。
+IncludeBlocks:   Regroup
+
+# 表示用于订购#include的不同#include类别的正则表达式。支持POSIX扩展正则表达式。这些正则表达式按顺序与包含文件名（包括<>或“”）匹配。分配属于第一个匹配正则表达式的值，并且#includes首先根据增加的类别编号排序，然后在每个类别中按字母顺序排序。如果没有一个正则表达式匹配，则将INT_MAX分配为类别。源文件的主标头自动获得类别0。因此，通常将其保留在#includes（https://llvm.org/docs/CodingStandards.html#include-style）的开头。但是，如果某些头总是需要排在第一位，则也可以分配负优先级。在IncludeBloks = IBS_Regroup时，可以使用第三个可选字段SortPriority来定义应排序#includes的优先级，并且Priority的值定义#include块的顺序，还可以将具有不同优先级的#includes进行分组如果未分配，``SortPriority``设置为Priority的默认值。
+IncludeCategories: 
+  - Regex:	'^"(llvm|llvm-c|clang|clang-c)/'
+    Priority:	2
+  - Regex:	'^(<|"(gtest|isl|json)/)'
+    Priority:	3
+  - Regex:	'.*'
+    Priority:	1
+
+# 指定文件到主包含映射中允许的后缀的正则表达式。在猜测#include是否是“主”包含（要分配类别0，请参见上文）时，请将此允许的后缀的正则表达式用于标头词干。 完成部分匹配，以便：-“”表示“任意后缀”-“ $”表示“无后缀”例如，如果配置为“（_test）？$”，则标头a.h将被视为a.cc和a_test.cc中的“ main”包含。
+IncludeIsMainRegex: '(Test)?$'
+
+# 为要格式化的文件指定一个正则表达式，该文件在文件到主要包含的映射中被视为“主要”。默认情况下，仅当文件以.c，.cc，.cpp，.c ++ 、. cxx，.m或.mm扩展名结尾时，clang格式才将文件视为“主文件”。 对于这些文件，将进行“主要”包含的猜测（分配类别0，请参见上文）。 此配置选项允许将文件的其他后缀和扩展名视为“主要”。例如，如果此选项配置为（Impl \ .hpp）$，则将文件ClassImpl.hpp视为“主”（除Class.c，Class.cc，Class.cpp等之外）和“ main” 包含文件”逻辑将被执行（在以后的阶段中也将使用IncludeIsMainRegex设置）。 如果不设置此选项，ClassImpl.hpp将不会在其他包含之前将主要包含文件放在最前面。
+#IncludeIsMainSourceRegex
+
+# case相对switch缩进
+IndentCaseLabels: false
+
+# extern 模块缩进
+#IndentExternBlock: NoIndent
+
+# GOTO 缩进
+IndentGotoLabels: true
+
+# 预处理缩进#if..
+#IndentPPDirectives: BeforeHash
+IndentPPDirectives: None
+
+# 行号的缩进宽度
+IndentWidth: 4
+
+# 函数定义/声明在返回类型之后缩进
+IndentWrappedFunctionNames: false
+
+# 如果设置为TCS_Wrapped，则将尾随逗号插入包装在多行中的容器文字（数组和对象）中。 当前仅适用于JavaScript，默认情况下为TCS_None禁用。 InsertTrailingCommas不能与BinPackArguments一起使用，因为插入逗号会禁用bin打包。
+NamespaceIndentation: None
+
+#JavaImportGroups: 
+#JavaScriptQuotes: Leave
+#JavaScriptWrapImports: true
+
+# 块开始处的空行被保留
+KeepEmptyLinesAtTheStartOfBlocks: false
+
+#MacroBlockBegin: ''
+#MacroBlockEnd:   ''
+
+# 连续空行的最大数量
+MaxEmptyLinesToKeep: 2
+
+
+# namespace缩进
+NamespaceIndentation: All
+
+#NamespaceMacros: 
+
+#ObjCBinPackProtocolList: Auto
+#ObjCBlockIndentWidth: 2
+#ObjCSpaceAfterProperty: false
+#ObjCSpaceBeforeProtocolList: true
+
+#PenaltyBreakAssignment: 2
+#PenaltyBreakBeforeFirstCallParameter: 19
+#PenaltyBreakComment: 300
+#PenaltyBreakFirstLessLess: 120
+#PenaltyBreakString: 1000
+#PenaltyBreakTemplateDeclaration: 10
+#PenaltyExcessCharacter: 10
+#PenaltyReturnTypeOnItsOwnLine: 60
+
+# 指针和参考对齐方式
+PointerAlignment: Right
+
+#RawStringFormats 
+
+# 重排注释
+ReflowComments:  true
+
+# include排序
+SortIncludes:    true
+
+# 声明排序
+SortUsingDeclarations: true
+
+# 强制类型转换后加空格
+SpaceAfterCStyleCast: false
+
+#逻辑运算符后加空格
+SpaceAfterLogicalNot: false
+
+# template后加空格
+SpaceAfterTemplateKeyword: true
+
+# 运算符前加空格
+SpaceBeforeAssignmentOperators: true
+
+# Cpp11样式添加空格
+SpaceBeforeCpp11BracedList: false
+
+#构造函数初始化前增加空格
+SpaceBeforeCtorInitializerColon: false
+
+# 继承前添加空格
+SpaceBeforeInheritanceColon: false
+
+# 开括号前加空格
+SpaceBeforeParens: Never
+
+# 循环函数前添加空格
+SpaceBeforeRangeBasedForLoopColon: false
+
+# 方括号前添加空格
+SpaceBeforeSquareBrackets: false
+
+# {}中添加空格
+SpaceInEmptyBlock: false
+
+# ()中添加空格
+SpaceInEmptyParentheses: false
+
+# 注释符号//前面添加空格数量
+SpacesBeforeTrailingComments: 4
+
+# <后和>前添加空格
+SpacesInAngles:  false
+
+# C格式转换中插入空格
+SpacesInCStyleCastParentheses: false
+
+# if/for/switch/while模块中添加空格
+SpacesInConditionalStatement: false
+
+# 容器中添加空格
+SpacesInContainerLiterals: false
+
+# (后和)前添加空格
+SpacesInParentheses: false
+
+# [后和]前添加空格
+SpacesInSquareBrackets: false
+
+Standard: Cpp11
+
+StatementMacros:
+  - Q_UNUSED
+  - QT_REQUIRE_VERSION
+
+TabWidth: 4
+UseTab: Always
