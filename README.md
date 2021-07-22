@@ -1,2 +1,2 @@
-# 021_Plug-socket-switch-LifeTester
+# 021_PlugSocket_SwitchLifeTester
 插头插座(开关)寿命试验机
