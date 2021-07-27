@@ -9,6 +9,8 @@
 #include "SysLCD_PageParam.h"
 #include "SysLCD_PageTest.h"
 
+#define DO_TYPE_BEEP 5
+
 // static uint8_t m_nMId=0; ///< 当前运行的电机ID
 TEST_VALUE_T g_stTestValue;
 TEST_VALUE_T g_stTestModeValue;
@@ -36,17 +38,23 @@ void SysTestCtrlProc(void)
     case TEST_STEP_IDLE: break;
 
     case TEST_STEP_START:	 //点了启动，跳转到这里，初始化时间变量,然后跳转到对应的状态
-        flag=0;
+        flag = 0;
         for(uint8_t i = 0; i < TEST_SELECT_NUMBER; i++)
         {
-            if(1==g_stTftTestValue.arrAutomatic[i]) { flag = 1; }
+            if(1 == g_stTftTestValue.arrAutomatic[i]) { flag = 1; }
         }
-        if(0==flag) {g_stTestValue.nStep=TEST_STEP_STOP;}  ///< 没有选择工位，停机
+        if(0 == flag) { g_stTestValue.nStep = TEST_STEP_STOP; }	   ///< 没有选择工位，停机
 
 
         g_stTestValue.nStatus = TEST_STATUS_START;
 
         memset((TEST_INFO_T *)g_stTestInfo, 0, sizeof(TEST_INFO_T) * TEST_SELECT_NUMBER);
+        for(uint8_t i = 0; i < TEST_SELECT_NUMBER; i++)
+        {
+            g_stTftTestValue.arrManual[i]		 = 0;
+            g_stTestShowFlag.arrManual[i]		 = 1;
+            g_stPageInfoValue[i].nFlagErrorClear = TFT_STATUS_ICON_DISABLE;
+        }
 
         SysTestDoAllCtrlProc(0);	//关闭所有DO
 
@@ -84,7 +92,15 @@ void SysTestCtrlProc(void)
             if((TFT_STATUS_ICON_DISABLE == g_stPageInfoValue[i].nFlagErrorClear) && (g_stTestInfo[i].nFaultCount >= g_stParamValue[g_nTestType][i].nFaultCount)) { flag = 0; }
         }
 
-        if(1 == flag) { g_stTestValue.nStep = g_stTestValue.nStepBkp; }
+        if(1 == flag)
+        {
+            g_stTestValue.nStep = g_stTestValue.nStepBkp;
+            SysDOCtrlProc(DO_TYPE_BEEP, 0);
+        }
+        else
+        {
+            SysDOCtrlProc(DO_TYPE_BEEP, 1);
+        }
         break;
 
 
@@ -108,10 +124,9 @@ void SysTestCtrlMeanWhile(void)
 
     for(uint8_t i = 0; i < TEST_SELECT_NUMBER; i++)
     {
-        info = &g_stTestInfo[i];
-
         if((g_stTftTestValue.arrAutomatic[i] == 1) && (0 == g_stTestInfo[i].nEndFlag))	  //选择工位
         {
+            info = &g_stTestInfo[i];
             info->nRunTime += 10;	 //运行时间开始计时
 
             switch(info->nModeStep)
@@ -170,6 +185,7 @@ void SysTestCtrlSequence(void)
 
     if((g_stTftTestValue.arrAutomatic[select] == 1) && (0 == g_stTestInfo[select].nEndFlag))	//选择工位
     {
+        info = &g_stTestInfo[select];
         info->nRunTime += 10;	 //运行时间开始计时
         switch(info->nModeStep)
         {
@@ -251,6 +267,7 @@ void SysTestAutoIconProc(TEST_SELECT_E _select, uint8_t _flag)
 static void SysTestDoAllCtrlProc(uint8_t _flag)
 {
     for(uint8_t i = 0; i < TEST_SELECT_NUMBER; i++) { SysDOCtrlProc(i, _flag); }
+    SysDOCtrlProc(DO_TYPE_BEEP, _flag);
 }
 
 //控制所有DO统一动作
@@ -266,6 +283,8 @@ static uint8_t SysCheckStopProc(void)
 
     for(uint8_t i = 0; i < TEST_SELECT_NUMBER; i++)
     {
+        if(0 == g_stParamValue[g_nTestType][i].nTestCount) { g_stTestInfo[i].nEndFlag = 1; }
+
         if(1 == g_stTftTestValue.arrAutomatic[i])
         {
             if(0 == g_stTestInfo[i].nEndFlag) { flag = 0; }
@@ -275,7 +294,7 @@ static uint8_t SysCheckStopProc(void)
     return flag;
 }
 
-// 步骤0打开对应的开关
+// 打开开关，计时时间和运行时间清零
 static void SysAutoStepOnProc(TEST_INFO_T *_info, TEST_SELECT_E _select)
 {
     SysDOCtrlProc(_select, 1);
@@ -283,6 +302,7 @@ static void SysAutoStepOnProc(TEST_INFO_T *_info, TEST_SELECT_E _select)
     _info->nRunTime	  = 0;
 }
 
+// 测量电流开关开的时间，到达短路时间后检查是否电流故障
 static uint8_t SysAutoStepOnWaitProc(TEST_INFO_T *_info, TEST_SELECT_E _select, uint8_t _index)
 {
     uint8_t flag = 0;
@@ -291,8 +311,8 @@ static uint8_t SysAutoStepOnWaitProc(TEST_INFO_T *_info, TEST_SELECT_E _select, 
 
     if(_info->nRunTime >= g_stParamValue[g_nTestType][_select].nShortTime * 100)
     {
-        _info->nValidFlag = 0;	  ///< 判断检测电流的时间
-        if(_info->nValidTime >= g_stParamValue[g_nTestType][_select].nTurnTime * 100) { _info->nValidFlag = 1; }
+        _info->nValidFlag = 0;
+        if(_info->nValidTime >= g_stParamValue[g_nTestType][_select].nTurnTime * 100) { _info->nValidFlag = 1; }	///< 电流开关时间大于接通时间，电流正常
 
         flag = 1;
     }
@@ -300,6 +320,7 @@ static uint8_t SysAutoStepOnWaitProc(TEST_INFO_T *_info, TEST_SELECT_E _select, 
     return flag;
 }
 
+// 关闭开关，计时时间和运行时间清零
 static void SysAutoStepOffProc(TEST_INFO_T *_info, TEST_SELECT_E _select)
 {
     SysDOCtrlProc(_select, 0);
@@ -307,6 +328,7 @@ static void SysAutoStepOffProc(TEST_INFO_T *_info, TEST_SELECT_E _select)
     _info->nRunTime	  = 0;
 }
 
+// 测量电流开关关的时间，到达短路时间后检查是否电流故障
 static uint8_t SysAutoStepOffWaitProc(TEST_INFO_T *_info, TEST_SELECT_E _select, uint8_t _index)
 {
     uint8_t flag = 0;
@@ -317,21 +339,21 @@ static uint8_t SysAutoStepOffWaitProc(TEST_INFO_T *_info, TEST_SELECT_E _select,
     {
         if(1 == _info->nValidFlag)	  ///< 接通状态正常
         {
-            _info->nValidFlag = 0;	  ///< 判断检测电流的时间
-            if(_info->nValidTime >= g_stParamValue[g_nTestType][_select].nLeaveTime * 100) { _info->nValidFlag = 1; }
+            _info->nValidFlag = 0;
+            if(_info->nValidTime >= g_stParamValue[g_nTestType][_select].nLeaveTime * 100) { _info->nValidFlag = 1; }	 ///< 电流开关时间大于断开时间，电流正常
         }
 
-        if(TFT_STATUS_ICON_ENABLE == g_stParamValue[g_nTestType][_select].nCurrentDetection)
+        if(TFT_STATUS_ICON_ENABLE == g_stParamValue[g_nTestType][_select].nCurrentDetection)	///< 使能电流检测
         {
-            if(0 == _info->nValidFlag)
+            if(0 == _info->nValidFlag)	  ///< 电流故障
             {
                 _info->nFaultCount++;
                 g_stPageInfoShowFlag[_select].nRealErrorCount = 1;
             }
         }
 
-        g_stTestInfo[_select].nTestCount++;	   //试验次数累加
-        g_stPageInfoShowFlag[_select].nRealCount		= 1;
+        g_stTestInfo[_select].nTestCount++;						///< 试验次数累加
+        g_stPageInfoShowFlag[_select].nRealCount		= 1;	///< 刷新数据
         g_stPageInfoShowFlag[_select].nRealCurrentCount = 1;
 
         flag = 1;
@@ -339,30 +361,27 @@ static uint8_t SysAutoStepOffWaitProc(TEST_INFO_T *_info, TEST_SELECT_E _select,
     return flag;
 }
 
+// 检查试验次数是否达到试验次数
 static void SysAutoStepCheckCountProc(TEST_INFO_T *_info, TEST_SELECT_E _select)
 {
-    if(_info->nFaultCount >= g_stParamValue[g_nTestType][_select].nFaultCount)
+    if(_info->nFaultCount >= g_stParamValue[g_nTestType][_select].nFaultCount)	  ///< 故障次数大于设置值
     {
-        if(TFT_STATUS_ICON_DISABLE == g_stPageInfoValue[_select].nFlagErrorClear)	 // 弹出报警页面对话框，而且蜂鸣器响
+        if(TFT_STATUS_ICON_DISABLE == g_stPageInfoValue[_select].nFlagErrorClear)	 ///< 没有点击故障清除
         {
-            SysTFTLcd_PageInfoGotoProc();
-            SysDOCtrlProc(TEST_SELECT_NUMBER, 1);
+            SysTFTLcd_PageInfoGotoProc();	 ///< 弹出报警页面对话框，而且蜂鸣器响
 
             g_stTestValue.nStep = TEST_STEP_START_WARN;
         }
-        else
-        {
-            SysDOCtrlProc(TEST_SELECT_NUMBER, 0);
-        }
     }
 
-    if(_info->nTestCount >= g_stParamValue[g_nTestType][_select].nTestCount)
+    if(_info->nTestCount >= g_stParamValue[g_nTestType][_select].nTestCount)	///< 达到设置次数
     {
         _info->nEndFlag							 = 1;
         g_stPageInfoShowFlag[_select].nDevStatus = 1;
     }
 }
 
+// 检测所有的达到停止条件
 static uint8_t SysAutoStepSingleAllEndProc(uint8_t _step)
 {
     uint8_t flag = 1;

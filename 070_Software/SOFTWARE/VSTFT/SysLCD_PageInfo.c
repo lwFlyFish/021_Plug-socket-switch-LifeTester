@@ -186,9 +186,11 @@ void SysLCDTFT_PageInfoShowInfoProc(void)
         case 13:	//工位一电流次数
             if(1 == g_stPageInfoShowFlag[TEST_SELECT_1].nRealCurrentCount)
             {
-                flag	= 1;
-                nItemID = TFT_Info_One_ElecCount;
-                SysLCDTFT_ShowNumberProc(nPage, nItemID, 0, 7, (g_stTestInfo[TEST_SELECT_1].nTestCount - g_stTestInfo[TEST_SELECT_1].nFaultCount), 7);
+                uint32_t count = 0;
+                flag		   = 1;
+                nItemID		   = TFT_Info_One_ElecCount;
+                if(TFT_STATUS_ICON_ENABLE == g_stParamValue[g_nTestType][TEST_SELECT_1].nCurrentDetection) { count = g_stTestInfo[TEST_SELECT_1].nTestCount - g_stTestInfo[TEST_SELECT_1].nFaultCount; }
+                SysLCDTFT_ShowNumberProc(nPage, nItemID, 0, 7, count, 7);
                 g_stPageInfoShowFlag[TEST_SELECT_1].nRealCurrentCount = 0;
             }
             break;
@@ -196,9 +198,11 @@ void SysLCDTFT_PageInfoShowInfoProc(void)
         case 14:	//工位二电流次数
             if(1 == g_stPageInfoShowFlag[TEST_SELECT_2].nRealCurrentCount)
             {
-                flag	= 1;
-                nItemID = TFT_Info_Two_ElecCount;
-                SysLCDTFT_ShowNumberProc(nPage, nItemID, 0, 7, (g_stTestInfo[TEST_SELECT_2].nTestCount - g_stTestInfo[TEST_SELECT_2].nFaultCount), 7);
+                uint32_t count = 0;
+                flag		   = 1;
+                nItemID		   = TFT_Info_Two_ElecCount;
+                if(TFT_STATUS_ICON_ENABLE == g_stParamValue[g_nTestType][TEST_SELECT_2].nCurrentDetection) { count = g_stTestInfo[TEST_SELECT_2].nTestCount - g_stTestInfo[TEST_SELECT_2].nFaultCount; }
+                SysLCDTFT_ShowNumberProc(nPage, nItemID, 0, 7, count, 7);
                 g_stPageInfoShowFlag[TEST_SELECT_2].nRealCurrentCount = 0;
             }
             break;
@@ -206,9 +210,11 @@ void SysLCDTFT_PageInfoShowInfoProc(void)
         case 15:	//工位三电流次数
             if(1 == g_stPageInfoShowFlag[TEST_SELECT_3].nRealCurrentCount)
             {
-                flag	= 1;
-                nItemID = TFT_Info_Thr_ElecCount;
-                SysLCDTFT_ShowNumberProc(nPage, nItemID, 0, 7, (g_stTestInfo[TEST_SELECT_3].nTestCount - g_stTestInfo[TEST_SELECT_3].nFaultCount), 7);
+                uint32_t count = 0;
+                flag		   = 1;
+                nItemID		   = TFT_Info_Thr_ElecCount;
+                if(TFT_STATUS_ICON_ENABLE == g_stParamValue[g_nTestType][TEST_SELECT_3].nCurrentDetection) { count = g_stTestInfo[TEST_SELECT_3].nTestCount - g_stTestInfo[TEST_SELECT_3].nFaultCount; }
+                SysLCDTFT_ShowNumberProc(nPage, nItemID, 0, 7, count, 7);
                 g_stPageInfoShowFlag[TEST_SELECT_3].nRealCurrentCount = 0;
             }
             break;
@@ -346,6 +352,8 @@ void SysTFTLcd_PageInfoGotoProc(void)
 static void SysIconProc(TEST_SELECT_E _select, uint8_t _flag)
 {
     g_stPageInfoShowFlag[_select].nFlagErrorClear = 1;
+
+    if(TEST_STATUS_STOP == g_stTestValue.nStatus) { return; }
 
     switch(_flag)
     {
