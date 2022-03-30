@@ -41,7 +41,6 @@ void EE_ReadSysConfigInfo(void)
             if(++m_nCount < 5)
             {
                 m_nStep	 = 0;
-                m_nCount = 0;
             }
             else
             {
