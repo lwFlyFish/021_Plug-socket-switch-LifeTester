@@ -35,7 +35,7 @@ void SysLCDTFT_PageParamShowInfoProc(void)
                 m_nTitleShowFlag = 0;
                 switch(g_nTestType)
 				{
-                case TEST_TYPE_SWITCH: SP3_SendSetSysTextValueCmdProc(nPageID, nCtrlID, 16, (BYTE *)"开关监控窗口", 1); break;
+                case TEST_TYPE_SWITCH: SP3_SendSetSysTextValueCmdProc(nPageID, nCtrlID, 16, (BYTE *)"开关参数设置窗口", 1); break;
 
                 case TEST_TYPE_SOCKET: SP3_SendSetSysTextValueCmdProc(nPageID, nCtrlID, 20, (BYTE *)"插头插座参数设置窗口", 1); break;
 

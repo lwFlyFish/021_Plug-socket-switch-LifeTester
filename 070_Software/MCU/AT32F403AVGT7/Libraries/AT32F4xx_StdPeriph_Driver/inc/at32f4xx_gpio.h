@@ -77,14 +77,14 @@ typedef enum
   */
 
 typedef enum
-{ GPIO_Mode_IN_ANALOG = 0x0,
-  GPIO_Mode_IN_FLOATING = 0x04,
-  GPIO_Mode_IN_PD = 0x28,
-  GPIO_Mode_IN_PU = 0x48,
-  GPIO_Mode_OUT_OD = 0x14,
-  GPIO_Mode_OUT_PP = 0x10,
-  GPIO_Mode_AF_OD = 0x1C,
-  GPIO_Mode_AF_PP = 0x18
+{ GPIO_Mode_IN_ANALOG = 0x0,			//模拟输入
+  GPIO_Mode_IN_FLOATING = 0x04,			//浮空输入
+  GPIO_Mode_IN_PD = 0x28,				//带下拉输入
+  GPIO_Mode_IN_PU = 0x48,				//带上拉输入
+  GPIO_Mode_OUT_OD = 0x14,				//开漏输出（双向IO）
+  GPIO_Mode_OUT_PP = 0x10,				//通用推挽输出
+  GPIO_Mode_AF_OD = 0x1C,				//复用功能开漏输出
+  GPIO_Mode_AF_PP = 0x18				//复用功能推挽输出
 }GPIOMode_Type;
 
 #define IS_GPIO_MDE(MDE) (((MDE) == GPIO_Mode_IN_ANALOG) || ((MDE) == GPIO_Mode_IN_FLOATING) || \

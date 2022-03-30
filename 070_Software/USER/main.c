@@ -69,7 +69,7 @@ int main(void)
             Set_SysProcTimerCtrlValueProc(10);
         }
 
-        // 10ms
+        // 10ms 
         if(Get_LedRefreshValueProc() == 0)
         {
             //重装初值 10ms

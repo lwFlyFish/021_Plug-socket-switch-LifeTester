@@ -39,19 +39,19 @@ BYTE SysLCDTFT_PageFirstButtonProc(uint16_t _id)
     {
     //显示试验界面
     case TFT_First_Switch_Button:
-			g_nTestType = TEST_TYPE_SWITCH;
-			SysTFTLcd_PageTestGotoProc();
-			nReturnValue = SUCESS_COMM;
-			break;
+		g_nTestType = TEST_TYPE_SWITCH;
+		SysTFTLcd_PageTestGotoProc();
+		nReturnValue = SUCESS_COMM;
+		break;
 	
-		case TFT_First_Socket_Button:
-			g_nTestType = TEST_TYPE_SOCKET;
-			SysTFTLcd_PageTestGotoProc();
-			nReturnValue = SUCESS_COMM;
-			break;
+	case TFT_First_Socket_Button:
+		g_nTestType = TEST_TYPE_SOCKET;
+		SysTFTLcd_PageTestGotoProc();
+		nReturnValue = SUCESS_COMM;
+		break;
 
-		default:nReturnValue = FAILURE;
-			break;
+	default:nReturnValue = FAILURE;
+		break;
     }
     return nReturnValue;
 }

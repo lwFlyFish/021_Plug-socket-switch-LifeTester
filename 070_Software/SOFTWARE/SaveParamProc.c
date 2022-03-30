@@ -31,7 +31,10 @@ void EE_ReadSysConfigInfo(void)
     switch(m_nStep)
     {
     case 0:	   // 5s
-        if(m_nTime > 2000) { m_nStep = 1; }
+        if(m_nTime > 2000) 
+        {
+            m_nStep = 1; 
+        }
         break;
 
     case 1:
@@ -41,6 +44,7 @@ void EE_ReadSysConfigInfo(void)
             if(++m_nCount < 5)
             {
                 m_nStep	 = 0;
+				// m_nCount = 0;			
             }
             else
             {

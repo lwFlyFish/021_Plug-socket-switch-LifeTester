@@ -16,7 +16,6 @@ TEST_VALUE_T g_stTestValue;
 TEST_VALUE_T g_stTestModeValue;
 TEST_INFO_T	 g_stTestInfo[TEST_SELECT_NUMBER];
 
-
 static void	   SysTestDoAllCtrlProc(uint8_t _flag);
 static void	   SysTestClearFaultAllCtrlProc(TFT_STATUS_ICON_E _status);
 static uint8_t SysCheckStopProc(void);
@@ -38,13 +37,19 @@ void SysTestCtrlProc(void)
     case TEST_STEP_IDLE: break;
 
     case TEST_STEP_START:	 //点了启动，跳转到这里，初始化时间变量,然后跳转到对应的状态
+        SysTestDoAllCtrlProc(0);
+        SysTestClearFaultAllCtrlProc(TFT_STATUS_ICON_DISABLE);
+
         flag = 0;
         for(uint8_t i = 0; i < TEST_SELECT_NUMBER; i++)
         {
             if(1 == g_stTftTestValue.arrAutomatic[i]) { flag = 1; }
         }
-        if(0 == flag) { g_stTestValue.nStep = TEST_STEP_STOP; }	   ///< 没有选择工位，停机
-
+        if(0 == flag)
+        {
+            g_stTestValue.nStep = TEST_STEP_STOP;
+            break;
+        }	 ///< 没有选择工位，停机
 
         g_stTestValue.nStatus = TEST_STATUS_START;
 
@@ -55,8 +60,6 @@ void SysTestCtrlProc(void)
             g_stTestShowFlag.arrManual[i]		 = 1;
             g_stPageInfoValue[i].nFlagErrorClear = TFT_STATUS_ICON_DISABLE;
         }
-
-        SysTestDoAllCtrlProc(0);	//关闭所有DO
 
         switch(g_stTestValue.nWorkMode)	   //判断工作模式
         {
@@ -70,7 +73,8 @@ void SysTestCtrlProc(void)
 
     case TEST_STEP_STOP:	//停止状态
         SysTestDoAllCtrlProc(0);
-        SysTestClearFaultAllCtrlProc(TFT_STATUS_ICON_DISABLE);
+
+        // SysTestClearFaultAllCtrlProc(TFT_STATUS_ICON_DISABLE);
 
         g_stTestShowFlag.nStart		= 1;
         g_stTestShowFlag.nWorkState = 1;
@@ -83,8 +87,11 @@ void SysTestCtrlProc(void)
     case TEST_STEP_START_MEAN_WHILE: SysTestCtrlMeanWhile(); break;
 
     //轮流工作
-    case TEST_STEP_START_SEQUENCE: SysTestCtrlSequence(); break;
+    case TEST_STEP_START_SEQUENCE:
+        SysTestCtrlSequence();
+        break;
 
+        //报警
     case TEST_STEP_START_WARN:
         flag = 1;
         for(uint8_t i = 0; i < TEST_SELECT_NUMBER; i++)
@@ -102,7 +109,6 @@ void SysTestCtrlProc(void)
             SysDOCtrlProc(DO_TYPE_BEEP, 1);
         }
         break;
-
 
     //
     default: break;
@@ -151,7 +157,7 @@ void SysTestCtrlMeanWhile(void)
 
             case 4:
                 SysAutoStepCheckCountProc(info, (TEST_SELECT_E)i);
-                info->nModeStep = 5;
+                info->nModeStep = 0;	//同时5
                 break;
 
             case 5:
@@ -276,7 +282,6 @@ static void SysTestClearFaultAllCtrlProc(TFT_STATUS_ICON_E _status)
     for(uint8_t i = 0; i < TEST_SELECT_NUMBER; i++) { g_stPageInfoValue[i].nFlagErrorClear = _status; }
 }
 
-
 static uint8_t SysCheckStopProc(void)
 {
     uint8_t flag = 1;
@@ -305,14 +310,17 @@ static void SysAutoStepOnProc(TEST_INFO_T *_info, TEST_SELECT_E _select)
 // 测量电流开关开的时间，到达短路时间后检查是否电流故障
 static uint8_t SysAutoStepOnWaitProc(TEST_INFO_T *_info, TEST_SELECT_E _select, uint8_t _index)
 {
-    uint8_t flag = 0;
+    uint8_t flag	= 0;
+    uint8_t flag_di = DI_Flag_Set;
 
-    if(DI_Flag_Set == DI_Flag[_index]) { _info->nValidTime += 10; }	   ///< 检测到电流的时间累加
+    if(flag_di == DI_Flag[_index])	  ///< 检测到电流的时间累加
+    { _info->nValidTime += 10; }
 
     if(_info->nRunTime >= g_stParamValue[g_nTestType][_select].nShortTime * 100)
     {
         _info->nValidFlag = 0;
-        if(_info->nValidTime >= g_stParamValue[g_nTestType][_select].nTurnTime * 100) { _info->nValidFlag = 1; }	///< 电流开关时间大于接通时间，电流正常
+        if(_info->nValidTime >= g_stParamValue[g_nTestType][_select].nTurnTime * 100)	 ///< 电流开关时间大于接通时间，电流正常
+        { _info->nValidFlag = 1; }
 
         flag = 1;
     }
@@ -333,7 +341,9 @@ static uint8_t SysAutoStepOffWaitProc(TEST_INFO_T *_info, TEST_SELECT_E _select,
 {
     uint8_t flag = 0;
 
-    if(DI_Flag_Reset == DI_Flag[_index]) { _info->nValidTime += 10; }
+    uint8_t flag_di = DI_Flag_Reset;
+
+    if(flag_di == DI_Flag[_index]) { _info->nValidTime += 10; }
 
     if(_info->nRunTime >= g_stParamValue[g_nTestType][_select].nBrokenTime * 100)
     {
@@ -368,9 +378,11 @@ static void SysAutoStepCheckCountProc(TEST_INFO_T *_info, TEST_SELECT_E _select)
     {
         if(TFT_STATUS_ICON_DISABLE == g_stPageInfoValue[_select].nFlagErrorClear)	 ///< 没有点击故障清除
         {
-            SysTFTLcd_PageInfoGotoProc();	 ///< 弹出报警页面对话框，而且蜂鸣器响
+            // SysTFTLcd_PageInfoGotoProc();	 ///< 弹出报警页面对话框，而且蜂鸣器响
 
-            g_stTestValue.nStep = TEST_STEP_START_WARN;
+            // g_stTestValue.nStep = TEST_STEP_START_WARN;
+            _info->nEndFlag							 = 1;
+            g_stPageInfoShowFlag[_select].nDevStatus = 1;
         }
     }
 
